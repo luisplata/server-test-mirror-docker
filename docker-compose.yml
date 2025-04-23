@@ -37,28 +37,28 @@ services:
   #     db:
   #       condition: service_healthy
 
-  db:
-    image: mysql:8.0
-    container_name: mysql-juego
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpass
-      MYSQL_DATABASE: juego
-      MYSQL_USER: jugador
-      MYSQL_PASSWORD: jugadorpass
-    volumes:
-      - mysql-data:/var/lib/mysql
-    networks:
-      - red-juego
-    healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
-      interval: 5s
-      timeout: 10s
-      retries: 5
+  # db:
+  #   image: mysql:8.0
+  #   container_name: mysql-juego
+  #   restart: always
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: rootpass
+  #     MYSQL_DATABASE: juego
+  #     MYSQL_USER: jugador
+  #     MYSQL_PASSWORD: jugadorpass
+  #   volumes:
+  #     - mysql-data:/var/lib/mysql
+  #   networks:
+  #     - red-juego
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+  #     interval: 5s
+  #     timeout: 10s
+  #     retries: 5
 
 networks:
   red-juego:
     driver: bridge
 
-volumes:
-  mysql-data:
+# volumes:
+#   mysql-data:
