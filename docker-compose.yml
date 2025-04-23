@@ -1,0 +1,64 @@
+services:
+  servidor:
+    build: .
+    container_name: servidor-mirror
+    ports:
+      - "7778:7778/udp"  # Mirror necesita este puerto expuesto
+    networks:
+      - red-juego
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+    environment:
+      - API_URL=http://api:3000  # Importante para que Mirror encuentre la API
+      - PORT=7778
+    # depends_on:
+    #   api:
+    #     condition: service_healthy
+
+  # api:
+  #   build:
+  #     context: ./api
+  #     dockerfile: Dockerfile
+  #   container_name: api-rust
+  #   networks:
+  #     - red-juego
+  #   ports:
+  #     - "3000:3000"  # Solo durante desarrollo
+  #   healthcheck:
+  #     test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 3
+  #   environment:
+  #     - DATABASE_URL=mysql://jugador:jugadorpass@db:3306/juego
+  #     - RUST_LOG=info
+  #   depends_on:
+  #     db:
+  #       condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    container_name: mysql-juego
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: juego
+      MYSQL_USER: jugador
+      MYSQL_PASSWORD: jugadorpass
+    volumes:
+      - mysql-data:/var/lib/mysql
+    networks:
+      - red-juego
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 10s
+      retries: 5
+
+networks:
+  red-juego:
+    driver: bridge
+
+volumes:
+  mysql-data:
